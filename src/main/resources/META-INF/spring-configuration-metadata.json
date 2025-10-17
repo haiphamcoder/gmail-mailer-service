@@ -1,0 +1,92 @@
+{
+  "properties": [
+    {
+      "name": "gmail.mail.host",
+      "type": "java.lang.String",
+      "description": "SMTP server hostname (e.g., smtp.gmail.com)."
+    },
+    {
+      "name": "gmail.mail.port",
+      "type": "java.lang.Integer",
+      "description": "SMTP server port (1-65535). Typical: 587 (STARTTLS)."
+    },
+    {
+      "name": "gmail.mail.username",
+      "type": "java.lang.String",
+      "description": "Account username or email address used for SMTP auth."
+    },
+    {
+      "name": "gmail.mail.password",
+      "type": "java.lang.String",
+      "description": "Password or app-specific password used for SMTP auth."
+    },
+    {
+      "name": "gmail.mail.properties.mail.smtp.auth",
+      "type": "java.lang.Boolean",
+      "description": "Enable SMTP authentication (mail.smtp.auth)."
+    },
+    {
+      "name": "gmail.mail.properties.mail.smtp.starttls.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable STARTTLS upgrade (mail.smtp.starttls.enable)."
+    },
+    {
+      "name": "gmail.mail.properties.mail.smtp.starttls.required",
+      "type": "java.lang.Boolean",
+      "description": "Require STARTTLS; fail if not available (mail.smtp.starttls.required)."
+    },
+    {
+      "name": "gmail.mail.properties.mail.smtp.ssl.trust",
+      "type": "java.lang.String",
+      "description": "Trusted SSL host(s) for SMTP (mail.smtp.ssl.trust). E.g., smtp.gmail.com"
+    }
+  ],
+  "hints": [
+    {
+      "name": "gmail.mail.properties.mail.smtp.auth",
+      "values": [
+        {
+          "value": "true",
+          "description": "Enable SMTP authentication"
+        },
+        {
+          "value": "false",
+          "description": "Disable SMTP authentication"
+        }
+      ]
+    },
+    {
+      "name": "gmail.mail.properties.mail.smtp.starttls.enable",
+      "values": [
+        {
+          "value": "true",
+          "description": "Enable STARTTLS"
+        },
+        {
+          "value": "false",
+          "description": "Disable STARTTLS"
+        }
+      ]
+    },
+    {
+      "name": "gmail.mail.properties.mail.smtp.starttls.required",
+      "values": [
+        {
+          "value": "true",
+          "description": "Require STARTTLS; fail if server doesn't support it"
+        },
+        {
+          "value": "false",
+          "description": "Do not require STARTTLS"
+        }
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "name": "gmail.mail",
+      "type": "io.github.haiphamcoder.mailer.config.MailProperties",
+      "sourceType": "io.github.haiphamcoder.mailer.config.MailProperties"
+    }
+  ]
+}
