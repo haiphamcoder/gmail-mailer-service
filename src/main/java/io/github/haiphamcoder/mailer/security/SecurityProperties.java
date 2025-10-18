@@ -67,4 +67,23 @@ public class SecurityProperties {
      * When false, generic error messages are returned to prevent information leakage.
      */
     private boolean detailedErrorMessages = false;
+
+    /**
+     * List of API paths that should be excluded from HMAC authentication.
+     * These paths will be accessible without security headers.
+     * <p>
+     * Examples:
+     * - "/api/v1/public/**" - all public APIs
+     * - "/api/v1/health" - health check endpoint
+     * - "/api/v1/status" - status endpoint
+     * <p>
+     * Path patterns support Ant-style wildcards:
+     * - "*" matches any character except path separator
+     * - "**" matches any characters including path separators
+     */
+    private String[] publicPaths = {
+        "/api/v1/public/**",
+        "/api/v1/health",
+        "/api/v1/status"
+    };
 }

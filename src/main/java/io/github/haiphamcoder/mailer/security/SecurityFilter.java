@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,13 +49,14 @@ public class SecurityFilter extends OncePerRequestFilter {
     private final HmacSignatureService hmacService;
     private final SecurityProperties securityProperties;
     private final ObjectMapper objectMapper;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, 
                                   FilterChain filterChain) throws ServletException, IOException {
         
-        // Skip security check if disabled or not an API request
-        if (!securityProperties.isEnabled() || !isApiRequest(request)) {
+        // Skip security check if disabled, not an API request, or is a public path
+        if (!securityProperties.isEnabled() || !isApiRequest(request) || isPublicPath(request)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -133,6 +135,34 @@ public class SecurityFilter extends OncePerRequestFilter {
     private boolean isApiRequest(HttpServletRequest request) {
         String path = request.getRequestURI();
         return path.startsWith(API_PATH_PREFIX);
+    }
+
+    /**
+     * Checks if the request path matches any of the configured public paths.
+     * Public paths are excluded from HMAC authentication.
+     *
+     * @param request the HTTP request
+     * @return true if the path is public and should skip authentication
+     */
+    private boolean isPublicPath(HttpServletRequest request) {
+        String requestPath = request.getRequestURI();
+        String[] publicPaths = securityProperties.getPublicPaths();
+        
+        if (publicPaths == null || publicPaths.length == 0) {
+            return false;
+        }
+        
+        for (String publicPath : publicPaths) {
+            if (pathMatcher.match(publicPath, requestPath)) {
+                if (securityProperties.isLogSecurityEvents()) {
+                    log.debug("Skipping authentication for public path: {} (matches pattern: {})", 
+                        requestPath, publicPath);
+                }
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**
