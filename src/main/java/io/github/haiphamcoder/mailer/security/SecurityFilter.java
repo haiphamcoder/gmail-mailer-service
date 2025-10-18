@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
  * Security headers expected:
  * - X-Access-Key: The access key (currently not used for validation, but logged)
  * - X-Timestamp: Unix timestamp in milliseconds
- * - X-Access-Sign: HMAC-SHA512 signature of (timestamp + project_token)
+ * - X-Access-Sign: HMAC-SHA512 signature of (timestamp)
  */
 @Component
 @Slf4j
@@ -44,7 +44,6 @@ public class SecurityFilter extends OncePerRequestFilter {
     private static final String ACCESS_KEY_HEADER = "X-Access-Key";
     private static final String TIMESTAMP_HEADER = "X-Timestamp";
     private static final String SIGNATURE_HEADER = "X-Access-Sign";
-    private static final String PROJECT_TOKEN_HEADER = "X-Project-Token";
 
     private final HmacSignatureService hmacService;
     private final SecurityProperties securityProperties;
@@ -65,7 +64,6 @@ public class SecurityFilter extends OncePerRequestFilter {
             String accessKey = request.getHeader(ACCESS_KEY_HEADER);
             String timestampStr = request.getHeader(TIMESTAMP_HEADER);
             String signature = request.getHeader(SIGNATURE_HEADER);
-            String projectToken = request.getHeader(PROJECT_TOKEN_HEADER);
 
             // Validate required headers
             if (accessKey == null || accessKey.isBlank()) {
@@ -83,10 +81,6 @@ public class SecurityFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if (projectToken == null || projectToken.isBlank()) {
-                handleSecurityError(response, "MISSING_PROJECT_TOKEN", "Missing X-Project-Token header");
-                return;
-            }
 
             // Parse and validate timestamp
             long timestamp;
@@ -106,7 +100,6 @@ public class SecurityFilter extends OncePerRequestFilter {
             // Verify HMAC signature
             boolean isValidSignature = hmacService.verifySignature(
                 timestamp, 
-                projectToken, 
                 securityProperties.getSecretKey(), 
                 signature
             );

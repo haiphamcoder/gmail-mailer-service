@@ -29,8 +29,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * Required security headers:
  * - X-Access-Key: Access key for the API
  * - X-Timestamp: Unix timestamp in milliseconds
- * - X-Project-Token: Project token for signature generation
- * - X-Access-Sign: HMAC-SHA512 signature of (timestamp + project_token)
+ * - X-Access-Sign: HMAC-SHA512 signature of (timestamp)
  */
 @RestController
 @RequestMapping("/api/v1/emails")
@@ -50,11 +49,9 @@ public class EmailController {
      * Security requirements:
      * - Valid HMAC signature in X-Access-Sign header
      * - Timestamp within tolerance window (X-Timestamp header)
-     * - Valid project token (X-Project-Token header)
      *
      * @param accessKey the access key (logged for audit purposes)
      * @param timestamp the request timestamp
-     * @param projectToken the project token
      * @param signature the HMAC signature
      * @param request the email request with recipient, subject, body, etc.
      * @return response containing the message ID if successful
@@ -77,9 +74,6 @@ public class EmailController {
             
             @Parameter(description = "Request timestamp in milliseconds", required = true)
             @RequestHeader("X-Timestamp") String timestamp,
-            
-            @Parameter(description = "Project token for signature generation", required = true)
-            @RequestHeader("X-Project-Token") String projectToken,
             
             @Parameter(description = "HMAC-SHA512 signature", required = true)
             @RequestHeader("X-Access-Sign") String signature,

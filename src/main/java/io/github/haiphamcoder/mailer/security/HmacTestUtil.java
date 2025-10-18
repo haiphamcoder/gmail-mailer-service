@@ -16,10 +16,9 @@ import lombok.RequiredArgsConstructor;
  * const CryptoJS = require('crypto-js');
  * pm.environment.set("access_key", "L8YfR3ARc5058...");
  * pm.environment.set("secret_key", "134999f18f0ec5f0d2ad0...");
- * pm.environment.set("project_token", "7137837...");
  * pm.environment.set("timestamp", Date.now());
  * 
- * let signature = pm.environment.get("timestamp") + pm.environment.get("project_token");
+ * let signature = pm.environment.get("timestamp");
  * let access_sign = CryptoJS.HmacSHA512(signature, pm.environment.get("secret_key")).toString();
  * pm.environment.set("access_sign", access_sign);
  * </pre>
@@ -35,35 +34,32 @@ public class HmacTestUtil {
      * This method is intended for development and testing only.
      *
      * @param timestamp the timestamp in milliseconds
-     * @param projectToken the project token
      * @param secretKey the secret key
      * @return the generated signature
      */
-    public String generateTestSignature(long timestamp, String projectToken, String secretKey) {
-        return hmacService.generateSignature(timestamp, projectToken, secretKey);
+    public String generateTestSignature(long timestamp, String secretKey) {
+        return hmacService.generateSignature(timestamp, secretKey);
     }
 
     /**
      * Generates a test signature using current timestamp.
      *
-     * @param projectToken the project token
      * @param secretKey the secret key
      * @return the generated signature
      */
-    public String generateTestSignatureNow(String projectToken, String secretKey) {
-        return hmacService.generateSignature(System.currentTimeMillis(), projectToken, secretKey);
+    public String generateTestSignatureNow(String secretKey) {
+        return hmacService.generateSignature(System.currentTimeMillis(), secretKey);
     }
 
     /**
      * Validates a test signature.
      *
      * @param timestamp the timestamp
-     * @param projectToken the project token
      * @param secretKey the secret key
      * @param signature the signature to validate
      * @return true if the signature is valid
      */
-    public boolean validateTestSignature(long timestamp, String projectToken, String secretKey, String signature) {
-        return hmacService.verifySignature(timestamp, projectToken, secretKey, signature);
+    public boolean validateTestSignature(long timestamp, String secretKey, String signature) {
+        return hmacService.verifySignature(timestamp, secretKey, signature);
     }
 }

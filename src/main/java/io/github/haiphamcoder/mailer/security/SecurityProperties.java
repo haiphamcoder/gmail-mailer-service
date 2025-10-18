@@ -18,12 +18,11 @@ import lombok.Setter;
  * <pre>
  * api.security.enabled=true
  * api.security.secret-key=${API_SECRET_KEY:your-secret-key}
- * api.security.project-token=${API_PROJECT_TOKEN:your-project-token}
  * api.security.timestamp-tolerance=300
  * </pre>
  * <p>
  * Security considerations:
- * - Store secret-key and project-token in environment variables or secret managers
+ * - Store secret-key in environment variables or secret managers
  * - Use strong, randomly generated keys (at least 32 characters)
  * - Regularly rotate secret keys in production
  */
@@ -47,12 +46,6 @@ public class SecurityProperties {
     @NotBlank(message = "Secret key is required when security is enabled")
     private String secretKey;
 
-    /**
-     * The project token used in signature generation.
-     * This should be unique per project/application.
-     */
-    @NotBlank(message = "Project token is required when security is enabled")
-    private String projectToken;
 
     /**
      * Timestamp tolerance in seconds for replay attack prevention.

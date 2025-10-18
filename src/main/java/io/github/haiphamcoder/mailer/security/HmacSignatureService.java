@@ -18,14 +18,14 @@ import lombok.extern.slf4j.Slf4j;
  * <p>
  * This service provides methods to:
  * <ul>
- *   <li>Generate HMAC signatures using timestamp + project token</li>
+ *   <li>Generate HMAC signatures using timestamp</li>
  *   <li>Verify incoming request signatures</li>
  *   <li>Validate timestamp to prevent replay attacks</li>
  * </ul>
  * <p>
  * The signature format follows the pattern:
  * <pre>
- * signature = HMAC-SHA512(timestamp + project_token, secret_key)
+ * signature = HMAC-SHA512(timestamp, secret_key)
  * </pre>
  * <p>
  * Security features:
@@ -41,24 +41,20 @@ public class HmacSignatureService {
     private static final long DEFAULT_TIMESTAMP_TOLERANCE_SECONDS = 300; // 5 minutes
 
     /**
-     * Generates an HMAC-SHA512 signature for the given timestamp and project token.
+     * Generates an HMAC-SHA512 signature for the given timestamp.
      *
-     * @param timestamp    the current timestamp in milliseconds
-     * @param projectToken the project token
-     * @param secretKey    the secret key for HMAC generation
+     * @param timestamp the current timestamp in milliseconds
+     * @param secretKey the secret key for HMAC generation
      * @return the generated signature as a hexadecimal string
-     * @throws IllegalArgumentException if any parameter is null or empty
+     * @throws IllegalArgumentException if secret key is null or empty
      */
-    public String generateSignature(long timestamp, String projectToken, String secretKey) {
-        if (projectToken == null || projectToken.isBlank()) {
-            throw new IllegalArgumentException("Project token cannot be null or empty");
-        }
+    public String generateSignature(long timestamp, String secretKey) {
         if (secretKey == null || secretKey.isBlank()) {
             throw new IllegalArgumentException("Secret key cannot be null or empty");
         }
 
         try {
-            String data = timestamp + projectToken;
+            String data = String.valueOf(timestamp);
             Mac mac = Mac.getInstance(HMAC_SHA512);
             SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), HMAC_SHA512);
             mac.init(secretKeySpec);
@@ -75,19 +71,18 @@ public class HmacSignatureService {
      * Verifies an HMAC signature against the provided parameters.
      *
      * @param timestamp    the timestamp from the request
-     * @param projectToken the project token
      * @param secretKey    the secret key for verification
      * @param providedSignature the signature provided in the request
      * @return true if the signature is valid, false otherwise
      */
-    public boolean verifySignature(long timestamp, String projectToken, String secretKey, String providedSignature) {
+    public boolean verifySignature(long timestamp, String secretKey, String providedSignature) {
         if (providedSignature == null || providedSignature.isBlank()) {
             log.warn("Provided signature is null or empty");
             return false;
         }
 
         try {
-            String expectedSignature = generateSignature(timestamp, projectToken, secretKey);
+            String expectedSignature = generateSignature(timestamp, secretKey);
             return MessageDigest.isEqual(
                 providedSignature.getBytes(StandardCharsets.UTF_8),
                 expectedSignature.getBytes(StandardCharsets.UTF_8)
