@@ -39,6 +39,36 @@
       "name": "gmail.mail.properties.mail.smtp.ssl.trust",
       "type": "java.lang.String",
       "description": "Trusted SSL host(s) for SMTP (mail.smtp.ssl.trust). E.g., smtp.gmail.com"
+    },
+    {
+      "name": "api.security.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable or disable API security (HMAC authentication)."
+    },
+    {
+      "name": "api.security.secret-key",
+      "type": "java.lang.String",
+      "description": "Secret key used for HMAC signature generation and validation."
+    },
+    {
+      "name": "api.security.timestamp-tolerance",
+      "type": "java.lang.Integer",
+      "description": "Timestamp tolerance in seconds for request validation (default: 300)."
+    },
+    {
+      "name": "api.security.log-security-events",
+      "type": "java.lang.Boolean",
+      "description": "Enable logging of security events (authentication attempts, failures, etc.)."
+    },
+    {
+      "name": "api.security.detailed-error-messages",
+      "type": "java.lang.Boolean",
+      "description": "Enable detailed error messages in API responses (disable in production for security)."
+    },
+    {
+      "name": "api.security.public-paths",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of public paths that don't require HMAC authentication."
     }
   ],
   "hints": [
@@ -80,13 +110,45 @@
           "description": "Do not require STARTTLS"
         }
       ]
-    }
-  ],
-  "groups": [
+    },
     {
-      "name": "gmail.mail",
-      "type": "io.github.haiphamcoder.mailer.config.MailProperties",
-      "sourceType": "io.github.haiphamcoder.mailer.config.MailProperties"
+      "name": "api.security.enabled",
+      "values": [
+        {
+          "value": "true",
+          "description": "Enable API security with HMAC authentication"
+        },
+        {
+          "value": "false",
+          "description": "Disable API security (not recommended for production)"
+        }
+      ]
+    },
+    {
+      "name": "api.security.log-security-events",
+      "values": [
+        {
+          "value": "true",
+          "description": "Enable security event logging"
+        },
+        {
+          "value": "false",
+          "description": "Disable security event logging"
+        }
+      ]
+    },
+    {
+      "name": "api.security.detailed-error-messages",
+      "values": [
+        {
+          "value": "true",
+          "description": "Enable detailed error messages (use only in development)"
+        },
+        {
+          "value": "false",
+          "description": "Disable detailed error messages (recommended for production)"
+        }
+      ]
     }
   ]
 }
